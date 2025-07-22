@@ -6,6 +6,5 @@ import jakarta.persistence.Entity;
 @Entity
 @DiscriminatorValue("WORKER")
 public class Worker extends Korisnik {
-    // Add worker-specific fields or methods here if needed
-}
 
+}
