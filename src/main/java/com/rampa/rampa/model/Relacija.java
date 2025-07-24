@@ -40,4 +40,44 @@ public class Relacija {
     public Relacija() {
         this.vozila = new ArrayList<>();
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNaziv() {
+        return naziv;
+    }
+
+    public void setNaziv(String naziv) {
+        this.naziv = naziv;
+    }
+
+    public Stanica getPrvaStanica() {
+        return prvaStanica;
+    }
+
+    public void setPrvaStanica(Stanica prvaStanica) {
+        this.prvaStanica = prvaStanica;
+    }
+
+    public Stanica getDrugaStanica() {
+        return drugaStanica;
+    }
+
+    public void setDrugaStanica(Stanica drugaStanica) {
+        this.drugaStanica = drugaStanica;
+    }
+
+    public List<Vozilo> getVozila() {
+        return vozila;
+    }
+
+    public void setVozila(List<Vozilo> vozila) {
+        this.vozila = vozila;
+    }
 }

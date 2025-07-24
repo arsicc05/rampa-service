@@ -19,5 +19,28 @@ public class Price {
         this.priceEur = priceEur;
         this.priceRsd = priceRsd;
     }
-}
 
+    public VoziloType getVoziloType() {
+        return voziloType;
+    }
+
+    public void setVoziloType(VoziloType voziloType) {
+        this.voziloType = voziloType;
+    }
+
+    public BigDecimal getPriceEur() {
+        return priceEur;
+    }
+
+    public void setPriceEur(BigDecimal priceEur) {
+        this.priceEur = priceEur;
+    }
+
+    public BigDecimal getPriceRsd() {
+        return priceRsd;
+    }
+
+    public void setPriceRsd(BigDecimal priceRsd) {
+        this.priceRsd = priceRsd;
+    }
+}

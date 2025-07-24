@@ -1,9 +1,9 @@
 package com.rampa.rampa.controller;
 
-import com.rampa.rampa.model.Rampa;
-import com.rampa.rampa.model.Stanica;
+import com.rampa.rampa.model.*;
 import com.rampa.rampa.service.RampaService;
 import com.rampa.rampa.service.StanicaService;
+import com.rampa.rampa.service.VoziloService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,6 +26,9 @@ public class WorkerController {
 
     @Autowired
     private RampaService rampaService;
+
+    @Autowired
+    private VoziloService voziloService;
 
     @GetMapping("/stanicas")
     public ResponseEntity<List<Stanica>> getAllStanicas() {
@@ -87,15 +90,180 @@ public class WorkerController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/vehicle-entry")
+    @PreAuthorize("hasRole('WORKER')")
+    public ResponseEntity<?> vehicleEntry(@RequestBody VehicleEntryRequest request) {
+        try {
+            Vozilo vozilo = voziloService.enterVehicle(
+                request.getRegistracija(),
+                request.getTip(),
+                request.getStanicaId(),
+                request.getRampaId()
+            );
+            return ResponseEntity.ok(new VehicleEntryResponse(
+                "Vehicle entered successfully. Rampa raised and lowered.",
+                vozilo
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error entering vehicle: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/vehicle-exit")
+    @PreAuthorize("hasRole('WORKER')")
+    public ResponseEntity<?> vehicleExit(@RequestBody VehicleExitRequest request) {
+        try {
+            voziloService.exitVehicle(
+                request.getVoziloId(),
+                request.getStanicaId(),
+                request.getCurrency(),
+                request.getLostReceipt()
+            );
+
+            String message = request.getLostReceipt() != null && request.getLostReceipt()
+                ? "Vehicle exited successfully. Maximum price charged for lost receipt."
+                : "Vehicle exited successfully. Payment processed.";
+
+            return ResponseEntity.ok(message);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error exiting vehicle: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/relacije/{stanicaId}")
+    @PreAuthorize("hasRole('WORKER')")
+    public ResponseEntity<List<Relacija>> getRelacijeForStanica(@PathVariable Long stanicaId) {
+        List<Relacija> relacije = voziloService.getRelacijeForStanica(stanicaId);
+        return ResponseEntity.ok(relacije);
+    }
+
+    @GetMapping("/vehicles-in-relacija/{relacijaId}")
+    @PreAuthorize("hasRole('WORKER')")
+    public ResponseEntity<List<Vozilo>> getVehiclesInRelacija(@PathVariable Long relacijaId) {
+        List<Vozilo> vozila = voziloService.getVehiclesInRelacija(relacijaId);
+        return ResponseEntity.ok(vozila);
+    }
 
     public static class SelectRampaRequest {
         private Long rampaId;
+        private Long workerId;
+
+        public SelectRampaRequest() {}
+
+        public Long getRampaId() {
+            return rampaId;
+        }
+
+        public void setRampaId(Long rampaId) {
+            this.rampaId = rampaId;
+        }
+
+        public Long getWorkerId() {
+            return workerId;
+        }
+
+        public void setWorkerId(Long workerId) {
+            this.workerId = workerId;
+        }
+    }
+
+    public static class VehicleEntryRequest {
+        private String registracija;
+        private VoziloType tip;
         private Long stanicaId;
+        private Long rampaId;
 
-        public Long getRampaId() { return rampaId; }
-        public void setRampaId(Long rampaId) { this.rampaId = rampaId; }
+        public VehicleEntryRequest() {}
 
-        public Long getStanicaId() { return stanicaId; }
-        public void setStanicaId(Long stanicaId) { this.stanicaId = stanicaId; }
+        public String getRegistracija() {
+            return registracija;
+        }
+
+        public void setRegistracija(String registracija) {
+            this.registracija = registracija;
+        }
+
+        public VoziloType getTip() {
+            return tip;
+        }
+
+        public void setTip(VoziloType tip) {
+            this.tip = tip;
+        }
+
+        public Long getStanicaId() {
+            return stanicaId;
+        }
+
+        public void setStanicaId(Long stanicaId) {
+            this.stanicaId = stanicaId;
+        }
+
+        public Long getRampaId() {
+            return rampaId;
+        }
+
+        public void setRampaId(Long rampaId) {
+            this.rampaId = rampaId;
+        }
+    }
+
+    public static class VehicleExitRequest {
+        private Long voziloId;
+        private Long stanicaId;
+        private String currency;
+        private Boolean lostReceipt;
+
+        public VehicleExitRequest() {}
+
+        public Long getVoziloId() {
+            return voziloId;
+        }
+
+        public void setVoziloId(Long voziloId) {
+            this.voziloId = voziloId;
+        }
+
+        public Long getStanicaId() {
+            return stanicaId;
+        }
+
+        public void setStanicaId(Long stanicaId) {
+            this.stanicaId = stanicaId;
+        }
+
+        public String getCurrency() {
+            return currency;
+        }
+
+        public void setCurrency(String currency) {
+            this.currency = currency;
+        }
+
+        public Boolean getLostReceipt() {
+            return lostReceipt;
+        }
+
+        public void setLostReceipt(Boolean lostReceipt) {
+            this.lostReceipt = lostReceipt;
+        }
+    }
+
+    public static class VehicleEntryResponse {
+        private String message;
+        private Vozilo vozilo;
+
+        public VehicleEntryResponse(String message, Vozilo vozilo) {
+            this.message = message;
+            this.vozilo = vozilo;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public Vozilo getVozilo() {
+            return vozilo;
+        }
     }
 }

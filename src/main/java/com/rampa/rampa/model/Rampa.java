@@ -15,12 +15,15 @@ public class Rampa {
     private RampaType tip;
     private RampaStatus status;
 
+    @Enumerated(EnumType.STRING)
+    private RampaPosition position = RampaPosition.SPUSTENA;
+
     public Rampa() {}
-    public Rampa( int redniBroj, RampaType tip, RampaStatus status) {
+
+    public Rampa(int redniBroj, RampaType tip, RampaStatus status) {
         this.redniBroj = redniBroj;
         this.tip = tip;
         this.status = status;
+        this.position = RampaPosition.SPUSTENA;
     }
-
 }
-
