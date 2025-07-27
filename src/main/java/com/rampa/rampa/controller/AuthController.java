@@ -5,6 +5,8 @@ import com.rampa.rampa.service.KorisnikService;
 import com.rampa.rampa.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -34,5 +36,28 @@ public class AuthController {
             response.put("error", "Invalid credentials");
             return ResponseEntity.status(401).body(response);
         }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName();
+            Korisnik korisnik = korisnikService.findByUsername(username);
+
+            if (korisnik != null) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("id", korisnik.getId());
+                response.put("username", korisnik.getUsername());
+                response.put("ime", korisnik.getIme());
+                response.put("prezime", korisnik.getPrezime());
+                response.put("email", korisnik.getEmail());
+                response.put("role", korisnikService.getUserRole(korisnik));
+                return ResponseEntity.ok(response);
+            }
+        }
+
+        return ResponseEntity.status(401).body(Map.of("error", "User not authenticated"));
     }
 }

@@ -29,10 +29,14 @@ public class Stanica {
     private BigDecimal zaradaEur = BigDecimal.ZERO;
     private BigDecimal zaradaRsd = BigDecimal.ZERO;
 
+    @Column(name = "vehicles_passed")
+    private Integer vehiclesPassed = 0;
+
     public Stanica() {
         this.rampe = new ArrayList<>();
         this.zaradaEur = BigDecimal.ZERO;
         this.zaradaRsd = BigDecimal.ZERO;
+        this.vehiclesPassed = 0;
     }
 
     public Stanica(String naziv, StatusEnum status) {
@@ -41,6 +45,7 @@ public class Stanica {
         this.rampe = new ArrayList<>();
         this.zaradaEur = BigDecimal.ZERO;
         this.zaradaRsd = BigDecimal.ZERO;
+        this.vehiclesPassed = 0;
     }
 
 }

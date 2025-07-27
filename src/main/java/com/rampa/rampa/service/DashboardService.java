@@ -78,11 +78,7 @@ public class DashboardService {
             stats.setZaradaEur(stanica.getZaradaEur() != null ? stanica.getZaradaEur() : BigDecimal.ZERO);
             stats.setZaradaRsd(stanica.getZaradaRsd() != null ? stanica.getZaradaRsd() : BigDecimal.ZERO);
 
-            List<Relacija> relacije = relacijaRepository.findByStanica(stanica);
-            int vehicleCount = relacije.stream()
-                .mapToInt(r -> r.getVozila() != null ? r.getVozila().size() : 0)
-                .sum();
-            stats.setVehiclesPassed(vehicleCount);
+            stats.setVehiclesPassed(stanica.getVehiclesPassed() != null ? stanica.getVehiclesPassed() : 0);
 
             stanicaStatsList.add(stats);
         }

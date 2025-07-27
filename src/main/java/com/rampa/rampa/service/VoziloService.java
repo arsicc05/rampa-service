@@ -78,6 +78,9 @@ public class VoziloService {
             voziloRepository.save(vozilo);
 
 
+            Integer currentCount = stanica.getVehiclesPassed() != null ? stanica.getVehiclesPassed() : 0;
+            stanica.setVehiclesPassed(currentCount + 1);
+
             Optional<Cenovnik> cenovnikOpt = cenovnikService.getCurrentValidCenovnik();
             if (cenovnikOpt.isPresent()) {
                 Cenovnik cenovnik = cenovnikOpt.get();
@@ -97,8 +100,9 @@ public class VoziloService {
                     BigDecimal currentZaradaRsd = stanica.getZaradaRsd() != null ? stanica.getZaradaRsd() : BigDecimal.ZERO;
                     stanica.setZaradaRsd(currentZaradaRsd.add(amount));
                 }
-                stanicaRepository.save(stanica);
             }
+
+            stanicaRepository.save(stanica);
 
             List<Relacija> relacije = relacijaRepository.findByVozilo(vozilo);
             for (Relacija relacija : relacije) {
