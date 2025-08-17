@@ -37,7 +37,7 @@ public class VoziloService {
         vozilo.setVremeUlaska(new Date());
         vozilo.setStatus(VoziloStatus.NA_RELACIJI);
 
-        Vozilo savedVozilo = voziloRepository.save(vozilo);
+        Vozilo savedVozilo = voziloRepository.saveAndFlush(vozilo);
 
         Optional<Rampa> rampaOpt = rampaRepository.findById(rampaId);
         if (rampaOpt.isPresent()) {
@@ -55,12 +55,19 @@ public class VoziloService {
             List<Relacija> relacije = relacijaRepository.findByStanica(stanica);
 
             for (Relacija relacija : relacije) {
-                relacija.getVozila().add(savedVozilo);
-                relacijaRepository.save(relacija);
+                addVehicleToRelacija(savedVozilo, relacija);
             }
         }
 
         return savedVozilo;
+    }
+
+    @Transactional
+    public void addVehicleToRelacija(Vozilo vozilo, Relacija relacija) {
+        if (!relacija.getVozila().contains(vozilo)) {
+            relacija.getVozila().add(vozilo);
+            relacijaRepository.save(relacija);
+        }
     }
 
     @Transactional

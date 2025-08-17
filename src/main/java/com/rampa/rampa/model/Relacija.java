@@ -1,5 +1,6 @@
 package com.rampa.rampa.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -20,7 +21,13 @@ public class Relacija {
     @ManyToOne
     private Stanica drugaStanica;
 
-    @OneToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "relacija_vozila",
+        joinColumns = @JoinColumn(name = "relacija_id"),
+        inverseJoinColumns = @JoinColumn(name = "vozilo_id")
+    )
+    @JsonManagedReference
     private List<Vozilo> vozila;
 
     public Relacija(String naziv, Stanica prvaStanica, Stanica drugaStanica) {

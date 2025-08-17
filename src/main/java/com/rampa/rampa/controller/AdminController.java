@@ -45,7 +45,7 @@ public class AdminController {
                     status = StatusEnum.valueOf(request.getStatus().toUpperCase());
                 } catch (IllegalArgumentException e) {
                     Map<String, String> errorResponse = new HashMap<>();
-                    errorResponse.put("error", "Invalid status. Valid values are: AKTIVNA, NEAKTIVNA");
+                    errorResponse.put("error", "Invalid status. Valid values are: AKTIVE, INACTIVE");
                     return ResponseEntity.badRequest().body(errorResponse);
                 }
             }
